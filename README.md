@@ -2,6 +2,8 @@
 
 Check for game configuration in src/settings.ts
 
+Online version: https://ecstatic-blackwell-e47dc6.netlify.app/
+
 ## Available Scripts
 
 In the project directory, you can run:
