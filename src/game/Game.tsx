@@ -7,6 +7,13 @@ import useSound from 'use-sound';
 
 import {BET_AMOUNT, INITAL_FUNDS, MAX_BETS, MULTI_BET_MULTIPLIER, SINGLE_BET_MULTIPLIER} from "../settings";
 
+const winConditions = {
+    [Gesture.NONE]: Gesture.NONE,
+    [Gesture.ROCK]: Gesture.SCISSORS,
+    [Gesture.PAPER]: Gesture.ROCK,
+    [Gesture.SCISSORS]: Gesture.PAPER
+}
+
 export default function Game () {
     const [funds, setFunds] = useState<number>(INITAL_FUNDS)
     const [bets, setBets] = useState<Gesture[]>([])
@@ -17,7 +24,7 @@ export default function Game () {
     const [playUnbet] = useSound("sound/unbet.mp3")
 
     function calculateWinnings(newRoll: Gesture) {
-        if(bets.includes(newRoll)){
+        if(isWin(bets, newRoll)){
             playWin()
             if(bets.length === 1) {
                 setFunds(funds + BET_AMOUNT * SINGLE_BET_MULTIPLIER)
@@ -26,6 +33,16 @@ export default function Game () {
             }
         }
         setBets([])
+    }
+
+    function isWin(bets: Gesture[], newRoll: Gesture) {
+        let result = 0
+        for(let bet of bets) {
+            if(bet === newRoll)
+                continue
+            result += (winConditions[bet] === newRoll) ? 1 : -1
+        }
+        return result > 0
     }
 
     function roll() {
