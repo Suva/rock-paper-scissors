@@ -1,0 +1,14 @@
+.betButton {
+    font-size: 40px;
+    width: 80px;
+    height: 80px;
+    background-color: #AA9FB1;
+
+    &.active {
+        background: green;
+    }
+
+    &.disabled {
+        opacity: 50%;
+    }
+}
