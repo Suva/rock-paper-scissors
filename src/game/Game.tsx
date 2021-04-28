@@ -3,15 +3,22 @@ import {Gesture} from "./Types"
 import RollIndicator from "./RollIndicator"
 import BetButton from "./BetButton";
 import "./Game.scss"
+import useSound from 'use-sound';
+
 import {BET_AMOUNT, INITAL_FUNDS, MAX_BETS, MULTI_BET_MULTIPLIER, SINGLE_BET_MULTIPLIER} from "../settings";
 
 export default function Game () {
     const [funds, setFunds] = useState<number>(INITAL_FUNDS)
     const [bets, setBets] = useState<Gesture[]>([])
     const [currentRoll, setCurrentRoll] = useState<Gesture>(Gesture.PAPER)
+    const [playSpin] = useSound("sound/spin.mp3")
+    const [playWin] = useSound("sound/coin.mp3")
+    const [playBet] = useSound("sound/bet.mp3")
+    const [playUnbet] = useSound("sound/unbet.mp3")
 
     function calculateWinnings(newRoll: Gesture) {
         if(bets.includes(newRoll)){
+            playWin()
             if(bets.length === 1) {
                 setFunds(funds + BET_AMOUNT * SINGLE_BET_MULTIPLIER)
             } else {
@@ -24,6 +31,7 @@ export default function Game () {
     function roll() {
         setCurrentRoll(Gesture.NONE)
         setTimeout(()=> {
+            playSpin()
             const newRoll = Math.floor(Math.random() * 3) + 1;
             setCurrentRoll(newRoll)
             setTimeout(() => calculateWinnings(newRoll), 1000)
@@ -32,6 +40,7 @@ export default function Game () {
 
     function makeBet(type: Gesture) {
         if(bets.includes(type)){
+            playUnbet()
             setFunds(funds + BET_AMOUNT)
             setBets(bets.filter(b=>b!==type))
             return
@@ -45,6 +54,7 @@ export default function Game () {
             return
         }
 
+        playBet()
         setFunds(funds - BET_AMOUNT)
         setBets([...bets, type])
     }
